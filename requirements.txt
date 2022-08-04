@@ -1,5 +1,6 @@
 django
 djangorestframework
+djangorestframework-simplejwt
 pillow
 psycopg2-binary
 python-decouple
