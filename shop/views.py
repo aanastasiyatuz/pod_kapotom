@@ -13,3 +13,8 @@ class ProductViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.U
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permissions_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
