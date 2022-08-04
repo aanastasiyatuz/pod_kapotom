@@ -14,6 +14,11 @@ class Comment(models.Model):
     product = models.ForeignKey(Product, related_name='comments', on_delete=models.CASCADE)
     body = models.TextField()
 
+class Rating(models.Model):
+    user = models.ForeignKey(User, related_name='ratings', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='ratings', on_delete=models.CASCADE)
+    value = models.IntegerField(choices=[(1,1), (2,2), (3,3), (4,4), (5,5)])
+
 class Like(models.Model):
     user = models.ForeignKey(User, related_name='likes', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='likes', on_delete=models.CASCADE)
