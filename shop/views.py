@@ -1,5 +1,8 @@
+from crypt import methods
+from turtle import title
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
+from yaml import serialize
 from .models import *
 from rest_framework.response import Response
 from rest_framework import mixins
@@ -27,6 +30,16 @@ class ProductViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.U
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+    
+    @action(methods=["GET"], detail=False)
+    def search(self, request):
+        title = request.query_params.get("title")
+        queryset = self.get_queriset()
+        if title:
+            queryset = queryset.filter(title_icontains=title)
+        
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data, 200)
 
 @api_view(["GET"])
 def toggle_like(request, p_id):
