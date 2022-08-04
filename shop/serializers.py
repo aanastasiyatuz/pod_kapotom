@@ -5,6 +5,12 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+        
+        return rep
 
 
 
@@ -17,4 +23,7 @@ class CommentSerializer(serializers.ModelSerializer):
         validated_data['user'] = self.context.get('request').user
         return super().create(validated_data)
         
-        
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['user'] = instance.user.email
+        return rep

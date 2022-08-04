@@ -1,14 +1,23 @@
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+from .models import *
+from rest_framework.response import Response
 from rest_framework import mixins
-from .models import Comment, Product
+from rest_framework.viewsets import GenericViewSet
+from .models import Comment
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+
 from .serializers import CommentSerializer, ProductSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
-
-class CommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin):
+class CommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permissions_classes = [IsAuthenticated]
-
+    permission_classes = [IsAuthenticated]
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
 class ProductViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -18,3 +27,15 @@ class ProductViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.U
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+
+@api_view(["GET"])
+def toggle_like(request, p_id):
+    user = request.user
+    product = get_object_or_404(Product, id=p_id)
+
+    if Like.objects.filter(user=user, product=product).exists():
+        Like.objects.filter(user=user, product=product).delete()
+    else:
+        Like.objects.filter(user=user, product=product)
+    return Response("Like toggled", 200)
+
