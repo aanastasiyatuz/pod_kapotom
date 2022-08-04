@@ -52,3 +52,20 @@ def toggle_like(request, p_id):
         Like.objects.filter(user=user, product=product)
     return Response("Like toggled", 200)
 
+@api_view 
+def add_rating(request, p_id):
+    user = request.user
+    value = request.POST.get('value')
+    product = get_object_or_404(Product, id=p_id)
+    if not value:
+        raise ValueError('value is required')
+
+    if Rating.objects.filter(user=user, product=product).exists():
+        rating = Rating.objects.get(user=user, product=product)
+        rating.value = value
+        rating.save()
+    else:
+        Rating.objects.create(user=user, product=product, value=value)
+    
+    return Response('rating created', 201)
+
