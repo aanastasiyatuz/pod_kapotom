@@ -1,3 +1,4 @@
+
 from rest_framework import serializers
 from .models import Product, Comment, Like
 
@@ -5,12 +6,26 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
     
     def to_representation(self, instance):
         rep = super().to_representation(instance)
+        print(rep)
         rep['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+        rep['likes'] = instance.likes.all().count()
+        rep['liked_by_user'] = False
+
+    
+
         
-        return rep
+        return rep 
+
+        
+        
+
+    
+
+  
 
 
 
