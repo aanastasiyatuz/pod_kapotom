@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from .models import Product, Comment, Like
 
 class ProductSerializer(serializers.ModelSerializer):
