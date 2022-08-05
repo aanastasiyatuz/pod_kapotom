@@ -18,7 +18,7 @@ class CommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.U
         context['request'] = self.request
         return context
     
-class ProductViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin):
+class ProductViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permissions_classes = [IsAuthenticatedOrReadOnly]
@@ -31,7 +31,7 @@ class ProductViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.U
     @action(methods=["GET"], detail=False)
     def search(self, request):
         title = request.query_params.get("title")
-        queryset = self.get_queriset()
+        queryset = self.get_queryset()
         if title:
             queryset = queryset.filter(title_icontains=title)
         
@@ -46,7 +46,7 @@ def toggle_like(request, p_id):
     if Like.objects.filter(user=user, product=product).exists():
         Like.objects.filter(user=user, product=product).delete()
     else:
-        Like.objects.filter(user=user, product=product)
+        Like.objects.create(user=user, product=product)
     return Response("Like toggled", 200)
 
 @api_view 

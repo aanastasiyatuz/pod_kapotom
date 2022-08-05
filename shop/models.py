@@ -7,7 +7,7 @@ class Product(models.Model):
     title = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     desc = models.TextField()
-    image = models.ImageField(upload_to='products')
+    image = models.ImageField(upload_to='products', blank=True)
 
 class Comment(models.Model):
     user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
